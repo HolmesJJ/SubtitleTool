@@ -3,10 +3,12 @@ package com.example.subtitletool.init;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.example.subtitletool.BR;
 import com.example.subtitletool.R;
 import com.example.subtitletool.base.BaseActivity;
+import com.example.subtitletool.constants.Constants;
 import com.example.subtitletool.databinding.ActivityInitBinding;
 import com.example.subtitletool.utils.ContextUtils;
 import com.example.subtitletool.utils.PermissionsUtils;
@@ -15,9 +17,10 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 public class InitActivity extends BaseActivity<ActivityInitBinding, InitViewModel> {
 
-    private static final int REC_PERMISSION = 100;
+    private static final String TAG = InitActivity.class.getSimpleName();
     private static final String[] PERMISSIONS = new String[]{
-            Manifest.permission.FOREGROUND_SERVICE
+            Manifest.permission.FOREGROUND_SERVICE,
+            Manifest.permission.RECORD_AUDIO
     };
 
     @Override
@@ -42,7 +45,7 @@ public class InitActivity extends BaseActivity<ActivityInitBinding, InitViewMode
             if (mViewModel != null) {
                 mViewModel.initData();
             }
-        }, PERMISSIONS, REC_PERMISSION, R.string.rationale_init);
+        }, PERMISSIONS, Constants.PERMISSION_REQUEST_CODE, R.string.rationale_init);
     }
 
     @Override

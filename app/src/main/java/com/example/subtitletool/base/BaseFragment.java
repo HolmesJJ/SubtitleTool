@@ -27,14 +27,12 @@ public abstract class BaseFragment<V extends ViewDataBinding, VM extends BaseVie
 
     @Override
     public void onAttach(@NonNull Context context) {
-
         super.onAttach(context);
         mContext = context;
     }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         mViewModel = ViewModelProviders.of(this).get(getViewModelClazz());
         getLifecycle().addObserver(mViewModel);
@@ -45,7 +43,6 @@ public abstract class BaseFragment<V extends ViewDataBinding, VM extends BaseVie
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable
             Bundle savedInstanceState) {
-
         mBinding = DataBindingUtil.inflate(inflater, initContentView(inflater, container,
                 savedInstanceState), container, false);
         refreshLayout();
@@ -54,23 +51,18 @@ public abstract class BaseFragment<V extends ViewDataBinding, VM extends BaseVie
 
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-
         super.onViewCreated(view, savedInstanceState);
-
         initViewObservable();
-
         initData();
     }
 
     @Override
     public void onDestroyView() {
-
         super.onDestroyView();
     }
 
     @Override
     public void onDestroy() {
-
         getLifecycle().removeObserver(mViewModel);
         mViewModel = null;
         mBinding.unbind();
@@ -79,7 +71,6 @@ public abstract class BaseFragment<V extends ViewDataBinding, VM extends BaseVie
 
     @Override
     public void onDetach() {
-
         mContext = null;
         super.onDetach();
     }
@@ -100,7 +91,6 @@ public abstract class BaseFragment<V extends ViewDataBinding, VM extends BaseVie
      * 刷新布局
      */
     public void refreshLayout() {
-
         if (mViewModel != null) {
             mBinding.setVariable(initVariableId(), mViewModel);
         }
@@ -136,12 +126,10 @@ public abstract class BaseFragment<V extends ViewDataBinding, VM extends BaseVie
     }
 
     public Resources getResourcesSafety() {
-
         return ContextUtils.getContext().getResources();
     }
 
     protected void finishActivity() {
-
         Activity activity = getActivity();
         if (null != activity) {
             activity.finish();

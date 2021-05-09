@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 
@@ -47,24 +48,17 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         mContext = this;
-
         mLoading = new LoadingDialog(this);
-
         initParam();
-
         initViewDataBinding(savedInstanceState);
-
         initViewObservable();
-
         initData();
     }
 
     @Override
     protected void onDestroy() {
-
         mViewModel = null;
         mBinding.unbind();
         mBinding = null;
@@ -73,7 +67,6 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
     }
 
     private void cancelLoading() {
-
         if (mLoading != null) {
             mLoading.cancel();
         }
@@ -117,7 +110,6 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
      * @return true-隐藏，false-不隐藏
      */
     protected boolean defaultHideSystemBar() {
-
         return true;
     }
 
@@ -141,7 +133,6 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
      * 刷新布局.
      */
     public void refreshLayout() {
-
         if (mViewModel != null) {
             mBinding.setVariable(initVariableId(), mViewModel);
         }
@@ -165,14 +156,12 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
     }
 
     public void showLoading() {
-
         if (mLoading != null) {
             mLoading.showLoading();
         }
     }
 
     public void showLoading(boolean canCancel) {
-
         if (mLoading != null) {
             mLoading.setCanceledOnTouchOutside(canCancel);
             mLoading.showLoading();
@@ -180,16 +169,14 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
     }
 
     public void stopLoading() {
-
         if (mLoading != null) {
-            //            mLoading.dismiss();
+            //  mLoading.dismiss();
             mLoading.dismissLoading();
         }
     }
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-
         if (ev.getAction() == MotionEvent.ACTION_DOWN) {
             View v = getCurrentFocus();
             if (KeyboardUtils.isShouldHideInput(v, ev)) {
@@ -206,7 +193,10 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
 
     @Override
     public void onPermissionsGranted(int requestCode, @NonNull List<String> perms) {
-        // 有权限都被准许后调用的接口
+        // 所有权限都被准许后调用的接口
+        if (onHasPermissions()) {
+            onPermissionSuccessCallbackFromSetting();
+        }
     }
 
     @Override
@@ -228,11 +218,8 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
         super.onActivityResult(requestCode, resultCode, data);
-
         if (requestCode == AppSettingsDialog.DEFAULT_SETTINGS_REQ_CODE) {
-
             if (!onHasPermissions()) {
                 exitApp();
             } else {
@@ -243,27 +230,23 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
 
     @Override
     protected void onPause() {
-
         super.onPause();
     }
 
     @Override
     protected void onResume() {
-
         super.onResume();
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
                                            @NonNull int[] grantResults) {
-
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         // EasyPermissions handles the request result.
         EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this);
     }
 
     private void backPressedExit() {
-
         if (Math.abs(System.currentTimeMillis() - mClickTime) > MILLISECONDS) {
             ToastUtils.showShortSafe(R.string.exit_app_str);
             mClickTime = System.currentTimeMillis();
@@ -273,7 +256,6 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
     }
 
     public Resources getResourcesSafety() {
-
         return ContextUtils.getContext().getResources();
     }
 
@@ -281,12 +263,10 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
      * 判断申请的权限是否都被允许
      */
     protected boolean onHasPermissions() {
-
         return true;
     }
 
     public void exitApp() {
-
         ActivityUtils.appExitDelayed(2000);
         this.finish();
     }
@@ -304,7 +284,6 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
      * @param clz 所跳转的目的Activity类
      */
     public void startActivity(Class<?> clz) {
-
         mContext.startActivity(new Intent(mContext, clz));
     }
 
@@ -315,7 +294,6 @@ public abstract class BaseActivity<V extends ViewDataBinding, VM extends BaseVie
      * @param bundle 跳转所携带的信息
      */
     public void startActivity(Class<?> clz, Bundle bundle) {
-
         Intent intent = new Intent(mContext, clz);
         if (bundle != null) {
             intent.putExtras(bundle);

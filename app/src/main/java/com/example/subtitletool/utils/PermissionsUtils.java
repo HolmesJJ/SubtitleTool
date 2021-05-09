@@ -1,7 +1,8 @@
 package com.example.subtitletool.utils;
 
 import android.app.Activity;
-import android.app.Fragment;
+
+import androidx.fragment.app.Fragment;
 
 import pub.devrel.easypermissions.EasyPermissions;
 

@@ -23,7 +23,7 @@ public class CustomThreadPool {
 
     private ExecutorService mExecutorService;
 
-    public CustomThreadPool(int poolSize){
+    public CustomThreadPool(int poolSize) {
         mExecutorService = new ThreadPoolExecutor(
                 1,
                 1,
@@ -34,7 +34,7 @@ public class CustomThreadPool {
                 new CustomRejectedExecutionHandler());
     }
 
-    public CustomThreadPool(int poolSize, int priority){
+    public CustomThreadPool(int poolSize, int priority) {
         mExecutorService = new ThreadPoolExecutor(
                 1,
                 1,
@@ -45,17 +45,17 @@ public class CustomThreadPool {
                 new CustomRejectedExecutionHandler());
     }
 
-    public void execute(Runnable runnable){
+    public void execute(Runnable runnable) {
         if(mExecutorService == null || mExecutorService.isShutdown()) return;
         mExecutorService.execute(runnable);
     }
 
-    public boolean isShutdown(){
+    public boolean isShutdown() {
         if(mExecutorService == null || mExecutorService.isShutdown()) return true;
         return false;
     }
 
-    public void release(){
+    public void release() {
         if(mExecutorService == null || isShutdown()) return;
         mExecutorService.shutdown();
     }
