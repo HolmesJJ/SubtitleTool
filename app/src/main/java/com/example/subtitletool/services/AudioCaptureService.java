@@ -1,4 +1,4 @@
-package com.example.subtitletool;
+package com.example.subtitletool.services;
 
 import android.app.Activity;
 import android.app.Notification;
@@ -19,6 +19,7 @@ import android.util.Log;
 import androidx.annotation.Nullable;
 import androidx.core.app.NotificationCompat;
 
+import com.example.subtitletool.R;
 import com.example.subtitletool.constants.Constants;
 import com.example.subtitletool.thread.CustomThreadPool;
 import com.example.subtitletool.utils.ContextUtils;
@@ -30,9 +31,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 
-public class MainService extends Service {
+public class AudioCaptureService extends Service {
 
-    private static final String TAG = MainService.class.getSimpleName();
+    private static final String TAG = AudioCaptureService.class.getSimpleName();
 
     private static final int MIN_BUFFER_SIZE = AudioRecord.getMinBufferSize(Constants.SAMPLE_RATE_INHZ, Constants.CHANNEL_CONFIG, Constants.AUDIO_FORMAT);
     private static final CustomThreadPool threadPoolAudioCapture = new CustomThreadPool(Thread.MAX_PRIORITY);
@@ -56,14 +57,14 @@ public class MainService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if (intent != null && intent.getAction().equals(Constants.MAIN_SERVICE_START)) {
-            Notification notification = new NotificationCompat.Builder(ContextUtils.getContext(), Constants.MAIN_SERVICE_CHANNEL)
+        if (intent != null && intent.getAction().equals(Constants.AUDIO_CAPTURE_SERVICE_START)) {
+            Notification notification = new NotificationCompat.Builder(ContextUtils.getContext(), Constants.AUDIO_CAPTURE_SERVICE_CHANNEL)
                     .setContentTitle(getResources().getString(R.string.app_name))
                     .setContentText(getResources().getString(R.string.audio_capturing))
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .build();
-            startForeground(Constants.MAIN_SERVICE_CHANNEL_ID, notification);
-            mediaProjection = mediaProjectionManager.getMediaProjection(Activity.RESULT_OK, intent.getParcelableExtra(Constants.MAIN_SERVICE_EXTRA_RESULT_DATA));
+            startForeground(Constants.AUDIO_CAPTURE_SERVICE_CHANNEL_ID, notification);
+            mediaProjection = mediaProjectionManager.getMediaProjection(Activity.RESULT_OK, intent.getParcelableExtra(Constants.AUDIO_CAPTURE_SERVICE_EXTRA_RESULT_DATA));
             startAudioCapture();
             // 系统被杀死后将尝试重新创建服务
             return START_STICKY;
@@ -94,8 +95,8 @@ public class MainService extends Service {
 
     private void createNotificationChannel() {
         NotificationChannel serviceChannel = new NotificationChannel(
-                Constants.MAIN_SERVICE_CHANNEL,
-                Constants.MAIN_SERVICE_CHANNEL,
+                Constants.AUDIO_CAPTURE_SERVICE_CHANNEL,
+                Constants.AUDIO_CAPTURE_SERVICE_CHANNEL,
                 NotificationManager.IMPORTANCE_DEFAULT
         );
         NotificationManager manager = getSystemService(NotificationManager.class);

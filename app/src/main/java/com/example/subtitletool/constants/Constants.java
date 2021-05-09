@@ -6,12 +6,15 @@ public class Constants {
 
     public static final int PERMISSION_REQUEST_CODE = 101;
     public static final int MEDIA_PROJECTION_REQUEST_CODE = 102;
-    public static final int MAIN_SERVICE_CHANNEL_ID = 103;
+    public static final int AUDIO_CAPTURE_SERVICE_CHANNEL_ID = 103;
 
-    public static final String MAIN_SERVICE_CHANNEL = "MainServiceChannel";
-    public static final String MAIN_SERVICE_START = "MainServiceStart";
-    public static final String MAIN_SERVICE_STOP = "MainServiceStop";
-    public static final String MAIN_SERVICE_EXTRA_RESULT_DATA = "MainServiceExtraResultData";
+    public static final String AUDIO_CAPTURE_SERVICE_CHANNEL = "AudioCaptureServiceChannel";
+    public static final String AUDIO_CAPTURE_SERVICE_START = "AudioCaptureServiceStart";
+    public static final String AUDIO_CAPTURE_SERVICE_STOP = "AudioCaptureServiceStop";
+    public static final String AUDIO_CAPTURE_SERVICE_EXTRA_RESULT_DATA = "AudioCaptureServiceExtraResultData";
+
+    public static final String SUBTITLE_SERVICE_START = "SubtitleServiceStart";
+    public static final String SUBTITLE_SERVICE_STOP = "SubtitleServiceStop";
 
     // 采样率，现在能够保证在所有设备上使用的采样率是44100Hz, 但是其他的采样率（22050, 16000, 11025）在一些设备上也可以使用
     public static final int SAMPLE_RATE_INHZ = 44100;

@@ -5,15 +5,20 @@ import android.content.Context;
 import android.content.Intent;
 import android.media.projection.MediaProjectionManager;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.View;
 
 import com.example.subtitletool.base.BaseActivity;
 import com.example.subtitletool.constants.Constants;
 import com.example.subtitletool.databinding.ActivityMainBinding;
 import com.example.subtitletool.listener.OnMultiClickListener;
+import com.example.subtitletool.services.AudioCaptureService;
+import com.example.subtitletool.services.SubtitleService;
 import com.example.subtitletool.utils.ContextUtils;
 import com.example.subtitletool.utils.ListenerUtils;
 import com.example.subtitletool.utils.ToastUtils;
+
+import pub.devrel.easypermissions.AppSettingsDialog;
 
 public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewModel> {
 
@@ -50,7 +55,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
 
     @Override
     protected void onDestroy() {
-        stopMainService();
+        stopSubtitleService();
+        stopAudioCaptureService();
         super.onDestroy();
     }
 
@@ -62,7 +68,8 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
                 ToastUtils.showShortSafe("MediaProjection permission obtained. Foreground service will be started to capture audio.");
                 mBinding.btnStartCapturing.setEnabled(false);
                 mBinding.btnStopCapturing.setEnabled(true);
-                startMainService(data);
+                startAudioCaptureService(data);
+                startSubtitleService();
             } else {
                 ToastUtils.showShortSafe("Request to obtain MediaProjection denied.");
             }
@@ -73,31 +80,21 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         ListenerUtils.setOnClickListener(mBinding.btnStartCapturing, new OnMultiClickListener() {
             @Override
             public void onMultiClick(View v) {
-                startMediaProjectionRequest();
+                if (hasSystemAlertWindowPermission()) {
+                    startMediaProjectionRequest();
+                }
             }
         });
 
         ListenerUtils.setOnClickListener(mBinding.btnStopCapturing, new OnMultiClickListener() {
             @Override
             public void onMultiClick(View v) {
-                stopMainService();
+                stopSubtitleService();
+                stopAudioCaptureService();
                 mBinding.btnStartCapturing.setEnabled(true);
                 mBinding.btnStopCapturing.setEnabled(false);
             }
         });
-    }
-
-    public void startMainService(Intent data) {
-        Intent serviceIntent = new Intent(ContextUtils.getContext(), MainService.class);
-        serviceIntent.setAction(Constants.MAIN_SERVICE_START);
-        serviceIntent.putExtra(Constants.MAIN_SERVICE_EXTRA_RESULT_DATA, data);
-        startForegroundService(serviceIntent);
-    }
-
-    public void stopMainService() {
-        Intent serviceIntent = new Intent(ContextUtils.getContext(), MainService.class);
-        serviceIntent.setAction(Constants.MAIN_SERVICE_STOP);
-        stopService(serviceIntent);
     }
 
     /**
@@ -111,5 +108,40 @@ public class MainActivity extends BaseActivity<ActivityMainBinding, MainViewMode
         // see: https://partnerissuetracker.corp.google.com/issues/139732252
         mediaProjectionManager = (MediaProjectionManager) getSystemService(Context.MEDIA_PROJECTION_SERVICE);
         startActivityForResult(mediaProjectionManager.createScreenCaptureIntent(), Constants.MEDIA_PROJECTION_REQUEST_CODE);
+    }
+
+    private boolean hasSystemAlertWindowPermission() {
+        if(!Settings.canDrawOverlays(ContextUtils.getContext())) {
+            new AppSettingsDialog.Builder(this).setTitle(R.string.need_permissions_str)
+                    .setRationale(getString(R.string.permissions_denied_content_str)).build().show();
+        } else {
+            return true;
+        }
+        return false;
+    }
+
+    public void startAudioCaptureService(Intent data) {
+        Intent serviceIntent = new Intent(ContextUtils.getContext(), AudioCaptureService.class);
+        serviceIntent.setAction(Constants.AUDIO_CAPTURE_SERVICE_START);
+        serviceIntent.putExtra(Constants.AUDIO_CAPTURE_SERVICE_EXTRA_RESULT_DATA, data);
+        startForegroundService(serviceIntent);
+    }
+
+    public void stopAudioCaptureService() {
+        Intent serviceIntent = new Intent(ContextUtils.getContext(), AudioCaptureService.class);
+        serviceIntent.setAction(Constants.AUDIO_CAPTURE_SERVICE_STOP);
+        stopService(serviceIntent);
+    }
+
+    public void startSubtitleService() {
+        Intent serviceIntent = new Intent(ContextUtils.getContext(), SubtitleService.class);
+        serviceIntent.setAction(Constants.SUBTITLE_SERVICE_START);
+        startService(serviceIntent);
+    }
+
+    public void stopSubtitleService() {
+        Intent serviceIntent = new Intent(ContextUtils.getContext(), SubtitleService.class);
+        serviceIntent.setAction(Constants.SUBTITLE_SERVICE_STOP);
+        stopService(serviceIntent);
     }
 }

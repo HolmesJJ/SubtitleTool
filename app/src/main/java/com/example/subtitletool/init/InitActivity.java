@@ -3,7 +3,6 @@ package com.example.subtitletool.init;
 import android.Manifest;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.subtitletool.BR;
 import com.example.subtitletool.R;
@@ -18,9 +17,12 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class InitActivity extends BaseActivity<ActivityInitBinding, InitViewModel> {
 
     private static final String TAG = InitActivity.class.getSimpleName();
+
     private static final String[] PERMISSIONS = new String[]{
-            Manifest.permission.FOREGROUND_SERVICE,
-            Manifest.permission.RECORD_AUDIO
+            android.Manifest.permission.FOREGROUND_SERVICE,
+            android.Manifest.permission.RECORD_AUDIO
+            // 自行去Settings打开SYSTEM_ALERT_WINDOW权限
+            // android.Manifest.permission.SYSTEM_ALERT_WINDOW
     };
 
     @Override
