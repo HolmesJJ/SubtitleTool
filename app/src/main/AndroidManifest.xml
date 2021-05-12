@@ -7,7 +7,6 @@
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:name=".base.BaseApplication"
@@ -38,12 +37,12 @@
         <!-- STT 必须要在这里定义，name不能改，STT的库会调用这里的信息 -->
         <meta-data
             android:name="com.baidu.speech.APP_ID"
-            android:value="23861843"/>
+            android:value="24142533"/>
         <meta-data
             android:name="com.baidu.speech.API_KEY"
-            android:value="D3nC11vOUxWW3azo9o3znO8h"/>
+            android:value="5aa5IFykCN1eNzD6Ke5t49Fq"/>
         <meta-data
             android:name="com.baidu.speech.SECRET_KEY"
-            android:value="l1z1zrxebAuHdlbPennGEpp7EnjSBruU"/>
+            android:value="VQuxilI4BEeDStcIqGYyBNUk172k0SG9"/>
     </application>
 </manifest>

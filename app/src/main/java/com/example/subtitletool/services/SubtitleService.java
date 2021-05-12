@@ -8,13 +8,16 @@ import android.graphics.PixelFormat;
 import android.os.IBinder;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.Nullable;
 
+import com.example.subtitletool.R;
 import com.example.subtitletool.constants.Constants;
 import com.example.subtitletool.stt.baidu.RecogResult;
 import com.example.subtitletool.stt.baidu.STTHelper;
@@ -29,7 +32,8 @@ public class SubtitleService extends Service implements STTListener {
     private static final String TAG = SubtitleService.class.getSimpleName();
 
     private WindowManager windowManager;
-    private LinearLayout linearLayout;
+    private View vSubtitle;
+    private TextView tvSubtitle;
 
     @Override
     public void onCreate() {
@@ -42,15 +46,15 @@ public class SubtitleService extends Service implements STTListener {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.getAction().equals(Constants.SUBTITLE_SERVICE_START)) {
-//            STTHelper.getInstance().start();
-//            STTHelper.getInstance().setSpeaking(true);
+            STTHelper.getInstance().start();
+            STTHelper.getInstance().setSpeaking(true);
             initLayout();
             // 系统被杀死后将尝试重新创建服务
             return START_STICKY;
         }  else {
-//            STTHelper.getInstance().setSpeaking(false);
-//            STTHelper.getInstance().stop();
-            windowManager.removeView(linearLayout);
+            STTHelper.getInstance().setSpeaking(false);
+            STTHelper.getInstance().stop();
+            windowManager.removeView(vSubtitle);
             stopSelf();
             // 系统被终止后将不会尝试重新创建服务
             return START_NOT_STICKY;
@@ -66,26 +70,24 @@ public class SubtitleService extends Service implements STTListener {
     @Override
     public void onDestroy() {
         Log.d(TAG, "onDestroy");
-        windowManager.removeView(linearLayout);
+        windowManager.removeView(vSubtitle);
         stopSelf();
         super.onDestroy();
     }
 
     @SuppressLint("ClickableViewAccessibility")
     private void initLayout() {
-        linearLayout = new LinearLayout(ContextUtils.getContext());
-        LinearLayout.LayoutParams linearLayoutLayoutParams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.MATCH_PARENT);
-        linearLayout.setBackgroundColor(Color.BLUE);
-        linearLayout.setLayoutParams(linearLayoutLayoutParams);
+        vSubtitle = LayoutInflater.from(this).inflate(R.layout.layout_subtitle, null);
+        tvSubtitle = (TextView) vSubtitle.findViewById(R.id.tv_subtitle);
 
-        final WindowManager.LayoutParams windowManagerLayoutParams = new WindowManager.LayoutParams(400, 150,
+        final WindowManager.LayoutParams windowManagerLayoutParams = new WindowManager.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, 150,
                 WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, PixelFormat.TRANSLUCENT);
         windowManagerLayoutParams.x = 0;
         windowManagerLayoutParams.y = 0;
         windowManagerLayoutParams.gravity = Gravity.CENTER;
-        windowManager.addView(linearLayout, windowManagerLayoutParams);
+        windowManager.addView(vSubtitle, windowManagerLayoutParams);
 
-        linearLayout.setOnTouchListener(new View.OnTouchListener() {
+        vSubtitle.setOnTouchListener(new View.OnTouchListener() {
             private final WindowManager.LayoutParams newWindowManagerLayoutParams = windowManagerLayoutParams;
             int newX, newY;
             float touchedX, touchedY;
@@ -101,7 +103,7 @@ public class SubtitleService extends Service implements STTListener {
                     case MotionEvent.ACTION_MOVE:
                         newWindowManagerLayoutParams.x = (int) (newX + (motionEvent.getRawX() - touchedX));
                         newWindowManagerLayoutParams.y = (int) (newY + (motionEvent.getRawY() - touchedY));
-                        windowManager.updateViewLayout(linearLayout, newWindowManagerLayoutParams);
+                        windowManager.updateViewLayout(vSubtitle, newWindowManagerLayoutParams);
                         break;
                     default:
                         break;
@@ -131,6 +133,7 @@ public class SubtitleService extends Service implements STTListener {
     @Override
     public void onSTTAsrPartialResult(String[] results, RecogResult recogResult) {
         Log.i(TAG, "onSTTAsrPartialResult results: " + Arrays.toString(results) + ", recogResult: " + recogResult.toString());
+        tvSubtitle.setText(results[0]);
     }
 
     @Override
@@ -141,7 +144,7 @@ public class SubtitleService extends Service implements STTListener {
     @Override
     public void onSTTAsrFinalResult(String[] results, RecogResult recogResult) {
         Log.i(TAG, "onSTTAsrFinalResult results: " + Arrays.toString(results) + ", recogResult: " + recogResult.toString());
-        ToastUtils.showShortSafe(results[0]);
+        tvSubtitle.setText(results[0]);
     }
 
     @Override
@@ -173,8 +176,8 @@ public class SubtitleService extends Service implements STTListener {
     @Override
     public void onSTTAsrExit() {
         Log.i(TAG, "onSTTAsrExit");
-//        STTHelper.getInstance().setSpeaking(false);
-//        STTHelper.getInstance().stop();
+        STTHelper.getInstance().setSpeaking(false);
+        STTHelper.getInstance().stop();
     }
 
     @Override

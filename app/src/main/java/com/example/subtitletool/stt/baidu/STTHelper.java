@@ -61,20 +61,23 @@ public class STTHelper implements IRecogListener {
         // int格式的参数
         ArrayList<String> intParams = new ArrayList<String>(Arrays.asList(
                 SpeechConstant.PID,
-                SpeechConstant.LMID,
                 SpeechConstant.VAD_ENDPOINT_TIMEOUT
         ));
         // bool格式的参数
         ArrayList<String> boolParams = new ArrayList<String>(Arrays.asList(
+                SpeechConstant.BDS_ASR_ENABLE_LONG_SPEECH, // 开启实时语音识别
                 SpeechConstant.ACCEPT_AUDIO_DATA,
                 SpeechConstant.ACCEPT_AUDIO_VOLUME
         ));
         final Map<String, Object> params = new HashMap<String, Object>();
         // 英语识别设置 {accept-audio-data=true, vad.endpoint-timeout=800, outfile=/storage/emulated/0/baiduASR/outfile.pcm, pid=1737, accept-audio-volume=false}
-        params.put(intParams.get(0), 1737);
-        params.put(intParams.get(2), 800);
+        // 长语音识别设置 {"accept-audio-data":true,"vad.endpoint-timeout":0,"outfile":"/storage/emulated/0/baiduASR/outfile.pcm","pid":15372,"enable.long.speech":true,"accept-audio-volume":false}
+        // 15372：普通话输入法模型(后处理带标点)
+        params.put(intParams.get(0), 15372);
+        params.put(intParams.get(1), 0);
         params.put(boolParams.get(0), true);
-        params.put(boolParams.get(1), false);
+        params.put(boolParams.get(1), true);
+        params.put(boolParams.get(2), false);
         params.put(SpeechConstant.OUT_FILE, FileUtils.createTmpDir(ContextUtils.getContext(), DIR_PATH) + File.separator + "outfile.pcm");
         return params;
     }

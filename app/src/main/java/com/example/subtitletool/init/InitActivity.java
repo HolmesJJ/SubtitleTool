@@ -22,8 +22,7 @@ public class InitActivity extends BaseActivity<ActivityInitBinding, InitViewMode
             android.Manifest.permission.FOREGROUND_SERVICE,
             android.Manifest.permission.RECORD_AUDIO,
             android.Manifest.permission.ACCESS_NETWORK_STATE,
-            android.Manifest.permission.INTERNET,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
+            android.Manifest.permission.INTERNET
             // 自行去Settings打开SYSTEM_ALERT_WINDOW权限
             // android.Manifest.permission.SYSTEM_ALERT_WINDOW
     };
