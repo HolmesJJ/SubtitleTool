@@ -16,9 +16,15 @@ import android.widget.LinearLayout;
 import androidx.annotation.Nullable;
 
 import com.example.subtitletool.constants.Constants;
+import com.example.subtitletool.stt.baidu.RecogResult;
+import com.example.subtitletool.stt.baidu.STTHelper;
+import com.example.subtitletool.stt.baidu.listeners.STTListener;
 import com.example.subtitletool.utils.ContextUtils;
+import com.example.subtitletool.utils.ToastUtils;
 
-public class SubtitleService extends Service {
+import java.util.Arrays;
+
+public class SubtitleService extends Service implements STTListener {
 
     private static final String TAG = SubtitleService.class.getSimpleName();
 
@@ -30,15 +36,20 @@ public class SubtitleService extends Service {
         super.onCreate();
         Log.d(TAG, "onCreate");
         windowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
+        STTHelper.getInstance().initSTT(this);
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent != null && intent.getAction().equals(Constants.SUBTITLE_SERVICE_START)) {
+//            STTHelper.getInstance().start();
+//            STTHelper.getInstance().setSpeaking(true);
             initLayout();
             // 系统被杀死后将尝试重新创建服务
             return START_STICKY;
         }  else {
+//            STTHelper.getInstance().setSpeaking(false);
+//            STTHelper.getInstance().stop();
             windowManager.removeView(linearLayout);
             stopSelf();
             // 系统被终止后将不会尝试重新创建服务
@@ -99,4 +110,81 @@ public class SubtitleService extends Service {
             }
         });
     }
+
+    // STT
+    // 引擎准备完毕
+    @Override
+    public void onSTTAsrReady() {
+        Log.i(TAG, "onSTTAsrReady");
+    }
+
+    @Override
+    public void onSTTAsrBegin() {
+        Log.i(TAG, "onSTTAsrBegin");
+    }
+
+    @Override
+    public void onSTTAsrEnd() {
+        Log.i(TAG, "onSTTAsrEnd");
+    }
+
+    @Override
+    public void onSTTAsrPartialResult(String[] results, RecogResult recogResult) {
+        Log.i(TAG, "onSTTAsrPartialResult results: " + Arrays.toString(results) + ", recogResult: " + recogResult.toString());
+    }
+
+    @Override
+    public void onSTTAsrOnlineNluResult(String nluResult) {
+        Log.i(TAG, "onSTTAsrOnlineNluResult nluResult: " + nluResult);
+    }
+
+    @Override
+    public void onSTTAsrFinalResult(String[] results, RecogResult recogResult) {
+        Log.i(TAG, "onSTTAsrFinalResult results: " + Arrays.toString(results) + ", recogResult: " + recogResult.toString());
+        ToastUtils.showShortSafe(results[0]);
+    }
+
+    @Override
+    public void onSTTAsrFinish(RecogResult recogResult) {
+        Log.i(TAG, "onSTTAsrFinish recogResult: " + recogResult.toString());
+    }
+
+    @Override
+    public void onSTTAsrFinishError(int errorCode, int subErrorCode, String descMessage, RecogResult recogResult) {
+        Log.i(TAG, "onSTTAsrFinishError errorCode: "+ errorCode + ", subErrorCode: " + subErrorCode + ", " + descMessage +", recogResult: " + recogResult.toString());
+    }
+
+    @Override
+    public void onSTTAsrLongFinish() {
+        Log.i(TAG, "onSTTAsrLongFinish");
+    }
+
+    @Override
+    public void onSTTAsrVolume(int volumePercent, int volume) {
+        Log.i(TAG, "onSTTAsrVolume 音量百分比" + volumePercent + " ; 音量" + volume);
+    }
+
+    @Override
+    public void onSTTAsrAudio(byte[] data, int offset, int length) {
+        Log.i(TAG, "onSTTAsrAudio 音频数据回调, length:" + data.length);
+    }
+
+    // 结束识别
+    @Override
+    public void onSTTAsrExit() {
+        Log.i(TAG, "onSTTAsrExit");
+//        STTHelper.getInstance().setSpeaking(false);
+//        STTHelper.getInstance().stop();
+    }
+
+    @Override
+    public void onSTTOfflineLoaded() {
+        Log.i(TAG, "onSTTOfflineLoaded");
+    }
+
+    @Override
+    public void onSTTOfflineUnLoaded() {
+        Log.i(TAG, "onSTTOfflineUnLoaded");
+    }
+
 }

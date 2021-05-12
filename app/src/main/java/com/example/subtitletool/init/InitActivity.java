@@ -20,7 +20,10 @@ public class InitActivity extends BaseActivity<ActivityInitBinding, InitViewMode
 
     private static final String[] PERMISSIONS = new String[]{
             android.Manifest.permission.FOREGROUND_SERVICE,
-            android.Manifest.permission.RECORD_AUDIO
+            android.Manifest.permission.RECORD_AUDIO,
+            android.Manifest.permission.ACCESS_NETWORK_STATE,
+            android.Manifest.permission.INTERNET,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE
             // 自行去Settings打开SYSTEM_ALERT_WINDOW权限
             // android.Manifest.permission.SYSTEM_ALERT_WINDOW
     };

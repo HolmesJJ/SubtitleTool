@@ -44,7 +44,6 @@ public class AudioCaptureService extends Service {
 
     private volatile boolean mIsAudioCaptureReady;
 
-
     @Override
     public void onCreate() {
         super.onCreate();
